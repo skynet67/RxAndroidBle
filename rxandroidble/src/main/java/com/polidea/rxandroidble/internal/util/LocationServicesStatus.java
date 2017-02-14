@@ -2,6 +2,8 @@ package com.polidea.rxandroidble.internal.util;
 
 import android.os.Build;
 
+import javax.inject.Inject;
+
 public class LocationServicesStatus {
 
     private final CheckerLocationProvider checkerLocationProvider;
@@ -12,6 +14,7 @@ public class LocationServicesStatus {
 
     private final ProviderApplicationTargetSdk providerApplicationTargetSdk;
 
+    @Inject
     public LocationServicesStatus(
             CheckerLocationProvider checkerLocationProvider,
             CheckerLocationPermission checkerLocationPermission,

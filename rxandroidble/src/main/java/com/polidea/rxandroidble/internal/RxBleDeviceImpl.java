@@ -9,6 +9,8 @@ import com.polidea.rxandroidble.exceptions.BleAlreadyConnectedException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -26,6 +28,7 @@ class RxBleDeviceImpl implements RxBleDevice {
     private final BehaviorSubject<RxBleConnection.RxBleConnectionState> connectionStateSubject = BehaviorSubject.create(DISCONNECTED);
     private AtomicBoolean isConnected = new AtomicBoolean(false);
 
+    @Inject
     public RxBleDeviceImpl(BluetoothDevice bluetoothDevice, RxBleConnection.Connector connector) {
         this.bluetoothDevice = bluetoothDevice;
         this.connector = connector;

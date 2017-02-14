@@ -6,6 +6,8 @@ import com.polidea.rxandroidble.internal.RxBleRadioOperation;
 
 import java.util.concurrent.Semaphore;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -15,6 +17,7 @@ public class RxBleRadioImpl implements RxBleRadio {
 
     private OperationPriorityFifoBlockingQueue queue = new OperationPriorityFifoBlockingQueue();
 
+    @Inject
     public RxBleRadioImpl() {
         new Thread(new Runnable() {
             @Override

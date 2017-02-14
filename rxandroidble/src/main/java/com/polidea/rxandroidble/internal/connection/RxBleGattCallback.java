@@ -15,6 +15,10 @@ import com.polidea.rxandroidble.exceptions.BleGattOperationType;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.internal.util.ByteAssociation;
 import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import rx.Observable;
 import rx.Scheduler;
 import rx.functions.Action0;
@@ -66,7 +70,8 @@ public class RxBleGattCallback {
             .replay()
             .autoConnect(0);
 
-    public RxBleGattCallback(Scheduler callbackScheduler) {
+    @Inject
+    public RxBleGattCallback(@Named("callback") Scheduler callbackScheduler) {
         this.callbackScheduler = callbackScheduler;
     }
 

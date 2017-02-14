@@ -1,11 +1,9 @@
 package com.polidea.rxandroidble.internal.connection;
 
-import static com.polidea.rxandroidble.internal.connection.RxBleConnectionConnectorOperationsProvider.RxBleOperations;
-import static com.polidea.rxandroidble.internal.util.ObservableUtil.justOnNext;
-
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Context;
+
 import com.polidea.rxandroidble.RxBleAdapterStateObservable.BleAdapterState;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.exceptions.BleDisconnectedException;
@@ -13,12 +11,16 @@ import com.polidea.rxandroidble.internal.RxBleRadio;
 import com.polidea.rxandroidble.internal.operations.RxBleRadioOperationDisconnect;
 import com.polidea.rxandroidble.internal.util.BleConnectionCompat;
 import com.polidea.rxandroidble.internal.util.RxBleAdapterWrapper;
+
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Actions;
 import rx.functions.Func0;
 import rx.functions.Func1;
+
+import static com.polidea.rxandroidble.internal.connection.RxBleConnectionConnectorOperationsProvider.RxBleOperations;
+import static com.polidea.rxandroidble.internal.util.ObservableUtil.justOnNext;
 
 public class RxBleConnectionConnectorImpl implements RxBleConnection.Connector {
 

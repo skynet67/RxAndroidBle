@@ -10,11 +10,18 @@ import com.polidea.rxandroidble.internal.operations.RxBleRadioOperationDisconnec
 import com.polidea.rxandroidble.internal.util.BleConnectionCompat;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.inject.Inject;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Actions;
 
 public class RxBleConnectionConnectorOperationsProvider {
+
+    @Inject
+    public RxBleConnectionConnectorOperationsProvider() {
+    }
 
     public static class RxBleOperations {
 
