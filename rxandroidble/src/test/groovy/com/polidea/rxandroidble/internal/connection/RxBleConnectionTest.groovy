@@ -7,10 +7,13 @@ import android.bluetooth.BluetoothGattService
 import android.os.Build
 import com.polidea.rxandroidble.*
 import com.polidea.rxandroidble.exceptions.*
+import com.polidea.rxandroidble.internal.operations.*
 import com.polidea.rxandroidble.internal.util.ByteAssociation
+import com.polidea.rxandroidble.internal.util.MockOperationTimeoutConfiguration
 import org.robolectric.annotation.Config
 import org.robospock.GradleRoboSpecification
 import rx.observers.TestSubscriber
+import rx.schedulers.TestScheduler
 import rx.subjects.BehaviorSubject
 import rx.subjects.PublishSubject
 import spock.lang.Unroll
@@ -33,7 +36,21 @@ class RxBleConnectionTest extends GradleRoboSpecification {
     def flatRadio = new FlatRxBleRadio()
     def gattCallback = Mock RxBleGattCallback
     def bluetoothGattMock = Mock BluetoothGatt
-    def objectUnderTest = new RxBleConnectionImpl(flatRadio, gattCallback, bluetoothGattMock)
+    def testScheduler = new TestScheduler()
+    def timeoutConfig = new MockOperationTimeoutConfiguration(testScheduler)
+    def objectUnderTest = new RxBleConnectionImpl(flatRadio, gattCallback, bluetoothGattMock,
+            { new RxBleRadioOperationMtuRequest(gattCallback, bluetoothGattMock, timeoutConfig) },
+            { new RxBleRadioOperationServicesDiscover.Builder(gattCallback, bluetoothGattMock) },
+            { new RxBleRadioOperationCharacteristicRead(gattCallback, bluetoothGattMock, timeoutConfig) },
+            { new RxBleRadioOperationCharacteristicWrite(gattCallback, bluetoothGattMock, timeoutConfig) },
+            { new RxBleRadioOperationDescriptorRead(gattCallback, bluetoothGattMock, timeoutConfig) },
+            { new RxBleRadioOperationDescriptorWrite(gattCallback, bluetoothGattMock, timeoutConfig) },
+            { new RxBleRadioOperationReadRssi(gattCallback, bluetoothGattMock, timeoutConfig) },
+            { new LongWriteOperationBuilderImpl(flatRadio, { 20 }, Mock(RxBleConnection),
+                    { new RxBleRadioOperationCharacteristicLongWrite(bluetoothGattMock, gattCallback,
+                            testSubscriber, testScheduler, timeoutConfig)}) },
+            testScheduler
+    )
     def connectionStateChange = BehaviorSubject.create()
     def TestSubscriber testSubscriber
 

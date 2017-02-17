@@ -21,7 +21,6 @@ public class RxBleRadioOperationConnectTest extends Specification {
     BluetoothGatt mockGatt = Mock BluetoothGatt
     RxBleGattCallback mockCallback = Mock RxBleGattCallback
     TestSubscriber<BluetoothGatt> testSubscriber = new TestSubscriber()
-    TestSubscriber<BluetoothGatt> getGattSubscriber = new TestSubscriber()
     PublishSubject<RxBleConnection.RxBleConnectionState> onConnectionStateSubject = PublishSubject.create()
     PublishSubject<BluetoothGatt> bluetoothGattPublishSubject = PublishSubject.create()
     PublishSubject observeDisconnectPublishSubject = PublishSubject.create()
@@ -37,10 +36,10 @@ public class RxBleRadioOperationConnectTest extends Specification {
     }
 
     def prepareObjectUnderTest(boolean autoConnect) {
-        objectUnderTest = new RxBleRadioOperationConnect(mockBluetoothDevice, mockCallback, connectionCompat, autoConnect)
+        objectUnderTest = new RxBleRadioOperationConnect(mockBluetoothDevice, mockCallback, connectionCompat)
+        objectUnderTest.setAutoConnect(autoConnect)
         objectUnderTest.setRadioBlockingSemaphore(mockSemaphore)
         asObservableSubscription = objectUnderTest.asObservable().subscribe(testSubscriber)
-        objectUnderTest.getBluetoothGatt().subscribe(getGattSubscriber)
     }
 
     def "asObservable() should not emit onNext before connection is established"() {
@@ -92,65 +91,6 @@ public class RxBleRadioOperationConnectTest extends Specification {
         testSubscriber.assertAnyOnNext {
             it instanceof BluetoothGatt
         }
-    }
-
-    def "getBluetoothGatt() should emit onNext each time RxBleCallback emits getBluetoothGatt()"() {
-
-        given:
-        objectUnderTest.run()
-        emitConnectingConnectionState()
-        emitConnectedConnectionState()
-
-        expect:
-        getGattSubscriber.assertValueCount(3) // + 1 after returning from run()
-    }
-
-    def "getBluetoothGatt() should not emit onError when connection error comes"() {
-
-        given:
-        objectUnderTest.run()
-
-        when:
-        emitConnectionError(new Throwable("test"))
-
-        then:
-        getGattSubscriber.assertNoErrors()
-    }
-
-    def "getBluetoothGatt() should emit onNext even when connection error comes"() {
-
-        given:
-        objectUnderTest.run()
-
-        when:
-        emitConnectionError(new Throwable("test"))
-
-        then:
-        getGattSubscriber.assertValueCount(2) // + 1 after returning from run()
-    }
-
-    def "getBluetoothGatt() should complete RxBleGattCallback.getBluetoothGatt() completes"() {
-
-        given:
-        objectUnderTest.run()
-
-        when:
-        bluetoothGattPublishSubject.onCompleted()
-
-        then:
-        getGattSubscriber.assertCompleted()
-    }
-
-    def "getBluetoothGatt() should complete when error comes"() {
-
-        given:
-        objectUnderTest.run()
-
-        when:
-        emitConnectionError(new Throwable("test"))
-
-        then:
-        getGattSubscriber.assertCompleted()
     }
 
     def "should release Semaphore after successful connection"() {

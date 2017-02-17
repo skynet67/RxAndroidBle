@@ -9,6 +9,7 @@ import com.polidea.rxandroidble.exceptions.BleGattOperationType
 import com.polidea.rxandroidble.internal.connection.ImmediateSerializedBatchAckStrategy
 import com.polidea.rxandroidble.internal.connection.RxBleGattCallback
 import com.polidea.rxandroidble.internal.util.ByteAssociation
+import com.polidea.rxandroidble.internal.util.MockOperationTimeoutConfiguration
 import rx.Observable
 import rx.functions.Func1
 import rx.internal.schedulers.ImmediateScheduler
@@ -19,7 +20,6 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.nio.ByteBuffer
-import java.util.concurrent.Callable
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -490,20 +490,14 @@ public class RxBleRadioOperationCharacteristicLongWriteTest extends Specificatio
         objectUnderTest = new RxBleRadioOperationCharacteristicLongWrite(
                 mockGatt,
                 mockCallback,
-                mockCharacteristic,
-                new Callable<Integer>() {
-
-                    @Override
-                    Integer call() throws Exception {
-                        return maxBatchSize
-                    }
-                },
-                writeOperationAckStrategy,
-                testData,
                 immediateScheduler,
                 immediateScheduler,
-                timeoutScheduler
+                new MockOperationTimeoutConfiguration(testScheduler)
         )
+        objectUnderTest.setData(testData)
+                .setWriteAckStrategy(writeOperationAckStrategy)
+                .setMaxBatchSize({ maxBatchSize })
+                .setCharacteristic(mockCharacteristic)
         objectUnderTest.setRadioBlockingSemaphore(mockSemaphore)
         objectUnderTest.asObservable().subscribe(testSubscriber)
     }

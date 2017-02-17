@@ -74,19 +74,20 @@ public class RxBleConnectionImpl implements RxBleConnection {
     Integer currentMtu = 20; // Default value at the beginning
 
     @Inject
-    public RxBleConnectionImpl(RxBleRadio rxBleRadio,
-                               RxBleGattCallback gattCallback,
-                               BluetoothGatt bluetoothGatt,
-                               Provider<RxBleRadioOperationMtuRequest> mtuRequestProvider,
-                               Provider<RxBleRadioOperationServicesDiscover.Builder> servicesDiscoveryRequestBuilderProvider,
-                               Provider<RxBleRadioOperationCharacteristicRead> readOperationProvider,
-                               Provider<RxBleRadioOperationCharacteristicWrite> writeOperationProvider,
-                               Provider<RxBleRadioOperationDescriptorRead> readDescriptorOperationProvider,
-                               Provider<RxBleRadioOperationDescriptorWrite> writeDescriptorOperationProvider,
-                               Provider<RxBleRadioOperationReadRssi> readRssiOperationProvider,
-                               Provider<LongWriteOperationBuilder> longWriteOperationBuilderProvider,
-                               @Named("timeout") Scheduler timeoutScheduler
-                               ) {
+    public RxBleConnectionImpl(
+            RxBleRadio rxBleRadio,
+            RxBleGattCallback gattCallback,
+            BluetoothGatt bluetoothGatt,
+            Provider<RxBleRadioOperationMtuRequest> mtuRequestProvider,
+            Provider<RxBleRadioOperationServicesDiscover.Builder> servicesDiscoveryRequestBuilderProvider,
+            Provider<RxBleRadioOperationCharacteristicRead> readOperationProvider,
+            Provider<RxBleRadioOperationCharacteristicWrite> writeOperationProvider,
+            Provider<RxBleRadioOperationDescriptorRead> readDescriptorOperationProvider,
+            Provider<RxBleRadioOperationDescriptorWrite> writeDescriptorOperationProvider,
+            Provider<RxBleRadioOperationReadRssi> readRssiOperationProvider,
+            Provider<LongWriteOperationBuilder> longWriteOperationBuilderProvider,
+            @Named("timeout") Scheduler timeoutScheduler
+    ) {
         this.rxBleRadio = rxBleRadio;
         this.gattCallback = gattCallback;
         this.bluetoothGatt = bluetoothGatt;

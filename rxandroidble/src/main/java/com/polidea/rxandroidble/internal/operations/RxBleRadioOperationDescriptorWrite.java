@@ -75,9 +75,7 @@ public class RxBleRadioOperationDescriptorWrite extends RxBleSingleGattRadioOper
         final BluetoothGattCharacteristic bluetoothGattCharacteristic = bluetoothGattDescriptor.getCharacteristic();
         final int originalWriteType = bluetoothGattCharacteristic.getWriteType();
         bluetoothGattCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-
         final boolean success = bluetoothGatt.writeDescriptor(bluetoothGattDescriptor);
-
         bluetoothGattCharacteristic.setWriteType(originalWriteType);
         return success;
     }

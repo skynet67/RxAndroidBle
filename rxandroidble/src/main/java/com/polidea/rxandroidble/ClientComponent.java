@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.location.LocationManager;
 
+import com.polidea.rxandroidble.helpers.LocationServicesOkObservable;
 import com.polidea.rxandroidble.internal.DeviceComponent;
 import com.polidea.rxandroidble.internal.RxBleRadio;
 import com.polidea.rxandroidble.internal.radio.RxBleRadioImpl;
@@ -24,7 +25,7 @@ import rx.schedulers.Schedulers;
 
 @ClientScope
 @Component(modules = {ClientComponent.ClientModule.class})
-interface ClientComponent {
+public interface ClientComponent {
 
     @Module(subcomponents = DeviceComponent.class)
     class ClientModule {
@@ -112,4 +113,6 @@ interface ClientComponent {
     }
 
     RxBleClient rxBleClient();
+
+    LocationServicesOkObservable locationServicesOkObservable();
 }

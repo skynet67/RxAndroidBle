@@ -59,14 +59,14 @@ public class RxBleRadioOperationDisconnect extends RxBleRadioOperation<Void> {
                 .flatMap(new Func1<BluetoothGatt, Observable<BluetoothGatt>>() {
                     @Override
                     public Observable<BluetoothGatt> call(BluetoothGatt bluetoothGatt) {
-                        return RxBleRadioOperationDisconnect.this.isDisconnected(bluetoothGatt)
-                                ? just(bluetoothGatt) : RxBleRadioOperationDisconnect.this.disconnect(bluetoothGatt);
+                        return isDisconnected(bluetoothGatt)
+                                ? just(bluetoothGatt) : disconnect(bluetoothGatt);
                     }
                 })
                 .doOnTerminate(new Action0() {
                     @Override
                     public void call() {
-                        RxBleRadioOperationDisconnect.this.releaseRadio();
+                        releaseRadio();
                     }
                 })
                 .observeOn(mainThreadScheduler)
@@ -80,13 +80,13 @@ public class RxBleRadioOperationDisconnect extends RxBleRadioOperation<Void> {
                         new Action1<Throwable>() {
                             @Override
                             public void call(Throwable throwable) {
-                                RxBleRadioOperationDisconnect.this.onError(throwable);
+                                onError(throwable);
                             }
                         },
                         new Action0() {
                             @Override
                             public void call() {
-                                RxBleRadioOperationDisconnect.this.onCompleted();
+                                onCompleted();
                             }
                         }
                 );

@@ -5,6 +5,7 @@ import com.polidea.rxandroidble.exceptions.BleGattCannotStartException
 import com.polidea.rxandroidble.exceptions.BleGattCallbackTimeoutException
 import com.polidea.rxandroidble.exceptions.BleGattOperationType
 import com.polidea.rxandroidble.internal.connection.RxBleGattCallback
+import com.polidea.rxandroidble.internal.util.MockOperationTimeoutConfiguration
 import rx.observers.TestSubscriber
 import rx.schedulers.TestScheduler
 import rx.subjects.PublishSubject
@@ -105,7 +106,8 @@ public class RxBleRadioOperationMtuRequestTest extends Specification {
     }
 
     private prepareObjectUnderTest() {
-        objectUnderTest = new RxBleRadioOperationMtuRequest(72, mockGattCallback, mockBluetoothGatt,timeout, timeoutTimeUnit, testScheduler)
+        objectUnderTest = new RxBleRadioOperationMtuRequest(mockGattCallback, mockBluetoothGatt,
+                new MockOperationTimeoutConfiguration(testScheduler))
         objectUnderTest.setRadioBlockingSemaphore(mockSemaphore)
         objectUnderTest.asObservable().subscribe(testSubscriber)
     }
