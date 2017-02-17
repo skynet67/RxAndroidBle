@@ -3,8 +3,8 @@ package com.polidea.rxandroidble.internal.cache;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.polidea.rxandroidble.injection.ClientScope;
-import com.polidea.rxandroidble.injection.DeviceComponent;
+import com.polidea.rxandroidble.ClientScope;
+import com.polidea.rxandroidble.internal.DeviceComponent;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,7 +24,6 @@ import rx.functions.Func1;
 public class DeviceComponentCache implements Map<String, DeviceComponent> {
 
     private final HashMap<String, DeviceComponentWeakReference> cache = new HashMap<>();
-
     private final DeviceComponentWeakReference.Provider deviceComponentReferenceProvider;
 
     @Inject

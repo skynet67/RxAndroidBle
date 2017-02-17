@@ -1,4 +1,4 @@
-package com.polidea.rxandroidble.injection;
+package com.polidea.rxandroidble.internal;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -7,6 +7,6 @@ import javax.inject.Scope;
 
 @Scope
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ClientScope {
+public @interface DeviceScope {
 
 }

@@ -2,21 +2,22 @@ package com.polidea.rxandroidble.internal;
 
 import android.bluetooth.BluetoothDevice;
 
-import com.polidea.rxandroidble.RxBleAdapterStateObservable;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
+import com.polidea.rxandroidble.internal.connection.ConnectionComponent;
 import com.polidea.rxandroidble.internal.connection.RxBleConnectionConnectorImpl;
-import com.polidea.rxandroidble.internal.connection.RxBleConnectionConnectorOperationsProvider;
-import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
-import com.polidea.rxandroidble.internal.util.BleConnectionCompat;
+import com.polidea.rxandroidble.internal.operations.TimeoutConfiguration;
 import com.polidea.rxandroidble.internal.util.RxBleAdapterWrapper;
 
-import javax.inject.Provider;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import rx.Scheduler;
 
-@Module
+@Module(subcomponents = ConnectionComponent.class)
 public class DeviceModule {
 
     final String macAddress;
@@ -31,22 +32,8 @@ public class DeviceModule {
     }
 
     @Provides
-    RxBleConnection.Connector provideRxBleConnectionConnector(
-            BluetoothDevice bluetoothDevice,
-            RxBleGattCallback.Provider gattCallbackProvider,
-            RxBleConnectionConnectorOperationsProvider operationsProvider,
-            RxBleRadio rxBleRadio,
-            BleConnectionCompat bleConnectionCompat,
-            RxBleAdapterWrapper rxBleAdapterWrapper,
-            RxBleAdapterStateObservable adapterStateObservable) {
-
-        return new RxBleConnectionConnectorImpl(bluetoothDevice,
-                gattCallbackProvider,
-                operationsProvider,
-                rxBleRadio,
-                bleConnectionCompat,
-                rxBleAdapterWrapper,
-                adapterStateObservable);
+    RxBleConnection.Connector provideRxBleConnectionConnector(RxBleConnectionConnectorImpl rxBleConnectionConnector) {
+        return rxBleConnectionConnector;
     }
 
     @Provides
@@ -55,12 +42,13 @@ public class DeviceModule {
     }
 
     @Provides
-    RxBleGattCallback.Provider provideRxBleGattCallback(final Provider<RxBleGattCallback> gattCallback) {
-        return new RxBleGattCallback.Provider() {
-            @Override
-            public RxBleGattCallback provide() {
-                return gattCallback.get();
-            }
-        };
+    @Named("operation")
+    TimeoutConfiguration providesOperationTimeoutConfiguration(@Named("timeout") Scheduler timeoutScheduler) {
+        return new TimeoutConfiguration(30, TimeUnit.SECONDS, timeoutScheduler);
+    }
+
+    @Provides
+    TimeoutConfiguration providesTimeoutConfiguration(@Named("timeout") Scheduler timeoutScheduler) {
+        return new TimeoutConfiguration(10, TimeUnit.SECONDS, timeoutScheduler);
     }
 }

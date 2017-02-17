@@ -2,28 +2,39 @@ package com.polidea.rxandroidble.internal.operations;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+
 import com.polidea.rxandroidble.exceptions.BleGattOperationType;
 import com.polidea.rxandroidble.internal.RxBleSingleGattRadioOperation;
 import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
 import com.polidea.rxandroidble.internal.util.ByteAssociation;
+
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import rx.Observable;
-import rx.Scheduler;
 import rx.functions.Func1;
 
 public class RxBleRadioOperationCharacteristicWrite extends RxBleSingleGattRadioOperation<byte[]> {
 
-    private final BluetoothGattCharacteristic bluetoothGattCharacteristic;
+    private BluetoothGattCharacteristic bluetoothGattCharacteristic;
+    private byte[] data;
 
-    private final byte[] data;
+    @Inject
+    RxBleRadioOperationCharacteristicWrite(RxBleGattCallback rxBleGattCallback, BluetoothGatt bluetoothGatt,
+                                                  @Named("operation") TimeoutConfiguration timeoutConfiguration) {
+        super(bluetoothGatt, rxBleGattCallback, BleGattOperationType.CHARACTERISTIC_WRITE, timeoutConfiguration);
+    }
 
-    public RxBleRadioOperationCharacteristicWrite(RxBleGattCallback rxBleGattCallback, BluetoothGatt bluetoothGatt,
-                                                  BluetoothGattCharacteristic bluetoothGattCharacteristic, byte[] data,
-                                                  Scheduler timeoutScheduler) {
-        super(bluetoothGatt, rxBleGattCallback, BleGattOperationType.CHARACTERISTIC_WRITE, 30, TimeUnit.SECONDS, timeoutScheduler);
-        this.bluetoothGattCharacteristic = bluetoothGattCharacteristic;
+    public RxBleRadioOperationCharacteristicWrite setCharacteristic(BluetoothGattCharacteristic characteristic) {
+        bluetoothGattCharacteristic = characteristic;
+        return this;
+    }
+
+    public RxBleRadioOperationCharacteristicWrite setData(byte[] data) {
         this.data = data;
+        return this;
     }
 
     @Override

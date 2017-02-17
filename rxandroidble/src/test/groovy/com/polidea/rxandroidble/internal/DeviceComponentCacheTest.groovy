@@ -1,6 +1,5 @@
 package com.polidea.rxandroidble.internal
 
-import com.polidea.rxandroidble.injection.DeviceComponent
 import com.polidea.rxandroidble.internal.cache.DeviceComponentCache
 import com.polidea.rxandroidble.internal.cache.MockDeviceReferenceProvider
 import spock.lang.Specification

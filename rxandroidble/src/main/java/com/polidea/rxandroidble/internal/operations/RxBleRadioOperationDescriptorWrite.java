@@ -3,42 +3,43 @@ package com.polidea.rxandroidble.internal.operations;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+
 import com.polidea.rxandroidble.exceptions.BleGattOperationType;
 import com.polidea.rxandroidble.internal.RxBleSingleGattRadioOperation;
 import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
 import com.polidea.rxandroidble.internal.util.ByteAssociation;
-import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import rx.Observable;
-import rx.Scheduler;
 import rx.functions.Func1;
 
 public class RxBleRadioOperationDescriptorWrite extends RxBleSingleGattRadioOperation<byte[]> {
 
-    private final BluetoothGattDescriptor bluetoothGattDescriptor;
-
-    private final byte[] data;
-
-    private final int bluetoothGattCharacteristicDefaultWriteType;
+    private BluetoothGattDescriptor bluetoothGattDescriptor;
+    private byte[] data;
 
     /**
      * Write Descriptor Operator constructor
-     * @param rxBleGattCallback the RxBleGattCallback
-     * @param bluetoothGatt the BluetoothGatt to use
-     * @param bluetoothGattCharacteristicDefaultWriteType BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-     * @param bluetoothGattDescriptor the descriptor to write
-     * @param data the value to write
-     * @param timeoutScheduler timeoutScheduler
+     *
+     * @param rxBleGattCallback       the RxBleGattCallback
+     * @param bluetoothGatt           the BluetoothGatt to use
      */
-    public RxBleRadioOperationDescriptorWrite(RxBleGattCallback rxBleGattCallback,
-                                              BluetoothGatt bluetoothGatt,
-                                              int bluetoothGattCharacteristicDefaultWriteType,
-                                              BluetoothGattDescriptor bluetoothGattDescriptor,
-                                              byte[] data,
-                                              Scheduler timeoutScheduler) {
-        super(bluetoothGatt, rxBleGattCallback, BleGattOperationType.DESCRIPTOR_WRITE, 30, TimeUnit.SECONDS, timeoutScheduler);
-        this.bluetoothGattCharacteristicDefaultWriteType = bluetoothGattCharacteristicDefaultWriteType;
-        this.bluetoothGattDescriptor = bluetoothGattDescriptor;
+    @Inject
+    RxBleRadioOperationDescriptorWrite(RxBleGattCallback rxBleGattCallback, BluetoothGatt bluetoothGatt,
+                                       @Named("operation") TimeoutConfiguration timeoutConfiguration) {
+        super(bluetoothGatt, rxBleGattCallback, BleGattOperationType.DESCRIPTOR_WRITE, timeoutConfiguration);
+    }
+
+    public RxBleRadioOperationDescriptorWrite setData(byte[] data) {
         this.data = data;
+        return this;
+    }
+
+    public RxBleRadioOperationDescriptorWrite setDescriptor(BluetoothGattDescriptor bluetoothGattDescriptor) {
+        this.bluetoothGattDescriptor = bluetoothGattDescriptor;
+        return this;
     }
 
     @Override
@@ -73,7 +74,7 @@ public class RxBleRadioOperationDescriptorWrite extends RxBleSingleGattRadioOper
         */
         final BluetoothGattCharacteristic bluetoothGattCharacteristic = bluetoothGattDescriptor.getCharacteristic();
         final int originalWriteType = bluetoothGattCharacteristic.getWriteType();
-        bluetoothGattCharacteristic.setWriteType(bluetoothGattCharacteristicDefaultWriteType);
+        bluetoothGattCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
 
         final boolean success = bluetoothGatt.writeDescriptor(bluetoothGattDescriptor);
 

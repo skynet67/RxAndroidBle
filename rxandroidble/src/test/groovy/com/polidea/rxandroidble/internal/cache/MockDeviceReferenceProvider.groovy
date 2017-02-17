@@ -1,6 +1,7 @@
 package com.polidea.rxandroidble.internal.cache
 
-import com.polidea.rxandroidble.injection.DeviceComponent
+import com.polidea.rxandroidble.internal.DeviceComponent
+
 
 class MockDeviceReferenceProvider implements DeviceComponentWeakReference.Provider {
 

@@ -12,6 +12,7 @@ import com.polidea.rxandroidble.exceptions.BleGattCharacteristicException;
 import com.polidea.rxandroidble.exceptions.BleGattDescriptorException;
 import com.polidea.rxandroidble.exceptions.BleGattException;
 import com.polidea.rxandroidble.exceptions.BleGattOperationType;
+import com.polidea.rxandroidble.internal.DeviceScope;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.internal.util.ByteAssociation;
 import java.util.UUID;
@@ -27,13 +28,8 @@ import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 
-
+@DeviceScope
 public class RxBleGattCallback {
-
-    public interface Provider {
-
-        RxBleGattCallback provide();
-    }
 
     private final Scheduler callbackScheduler;
     private final BehaviorSubject statusErrorSubject = BehaviorSubject.create();

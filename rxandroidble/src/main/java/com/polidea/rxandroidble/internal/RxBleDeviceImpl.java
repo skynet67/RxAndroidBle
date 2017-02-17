@@ -21,6 +21,7 @@ import static com.polidea.rxandroidble.RxBleConnection.RxBleConnectionState.CONN
 import static com.polidea.rxandroidble.RxBleConnection.RxBleConnectionState.CONNECTING;
 import static com.polidea.rxandroidble.RxBleConnection.RxBleConnectionState.DISCONNECTED;
 
+@DeviceScope
 class RxBleDeviceImpl implements RxBleDevice {
 
     private final BluetoothDevice bluetoothDevice;
@@ -51,7 +52,7 @@ class RxBleDeviceImpl implements RxBleDevice {
             public Observable<RxBleConnection> call() {
 
                 if (isConnected.compareAndSet(false, true)) {
-                    return connector.prepareConnection(context, autoConnect)
+                    return connector.prepareConnection(autoConnect)
                             .doOnSubscribe(new Action0() {
                                 @Override
                                 public void call() {

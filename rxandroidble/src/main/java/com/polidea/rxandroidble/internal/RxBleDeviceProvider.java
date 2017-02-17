@@ -1,8 +1,7 @@
 package com.polidea.rxandroidble.internal;
 
 import com.polidea.rxandroidble.RxBleDevice;
-import com.polidea.rxandroidble.injection.ClientScope;
-import com.polidea.rxandroidble.injection.DeviceComponent;
+import com.polidea.rxandroidble.ClientScope;
 import com.polidea.rxandroidble.internal.cache.DeviceComponentCache;
 
 import java.util.Map;

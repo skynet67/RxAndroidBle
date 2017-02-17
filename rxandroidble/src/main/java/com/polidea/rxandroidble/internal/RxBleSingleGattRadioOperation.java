@@ -3,13 +3,17 @@ package com.polidea.rxandroidble.internal;
 
 import android.bluetooth.BluetoothGatt;
 import android.os.DeadObjectException;
+
 import com.polidea.rxandroidble.exceptions.BleDisconnectedException;
 import com.polidea.rxandroidble.exceptions.BleException;
 import com.polidea.rxandroidble.exceptions.BleGattCallbackTimeoutException;
 import com.polidea.rxandroidble.exceptions.BleGattCannotStartException;
 import com.polidea.rxandroidble.exceptions.BleGattOperationType;
 import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
+import com.polidea.rxandroidble.internal.operations.TimeoutConfiguration;
+
 import java.util.concurrent.TimeUnit;
+
 import rx.Observable;
 import rx.Scheduler;
 import rx.Subscription;
@@ -18,15 +22,10 @@ import rx.functions.Action0;
 public abstract class RxBleSingleGattRadioOperation<T> extends RxBleRadioOperation<T> {
 
     private final BluetoothGatt bluetoothGatt;
-
     private final RxBleGattCallback rxBleGattCallback;
-
     private final BleGattOperationType operationType;
-
     private final long timeout;
-
     private final TimeUnit timeoutTimeUnit;
-
     private final Scheduler timeoutScheduler;
 
     public RxBleSingleGattRadioOperation(
@@ -43,6 +42,14 @@ public abstract class RxBleSingleGattRadioOperation<T> extends RxBleRadioOperati
         this.timeout = timeout;
         this.timeoutTimeUnit = timeoutTimeUnit;
         this.timeoutScheduler = timeoutScheduler;
+    }
+
+    public RxBleSingleGattRadioOperation(BluetoothGatt bluetoothGatt,
+                                         RxBleGattCallback rxBleGattCallback,
+                                         BleGattOperationType gattOperationType,
+                                         TimeoutConfiguration timeoutConfiguration) {
+        this(bluetoothGatt, rxBleGattCallback, gattOperationType,
+                timeoutConfiguration.timeout, timeoutConfiguration.timeoutTimeUnit, timeoutConfiguration.timeoutScheduler);
     }
 
     @Override

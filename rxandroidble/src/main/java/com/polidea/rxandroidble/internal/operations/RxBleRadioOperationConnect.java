@@ -14,6 +14,9 @@ import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
 import com.polidea.rxandroidble.internal.util.BleConnectionCompat;
 
 import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -25,22 +28,16 @@ import static com.polidea.rxandroidble.RxBleConnection.RxBleConnectionState.CONN
 public class RxBleRadioOperationConnect extends RxBleRadioOperation<BluetoothGatt> {
 
     private final BluetoothDevice bluetoothDevice;
-
     private final RxBleGattCallback rxBleGattCallback;
-
     private final BleConnectionCompat connectionCompat;
-
-    private final boolean autoConnect;
-
+    private boolean autoConnect;
     private BehaviorSubject<BluetoothGatt> bluetoothGattBehaviorSubject = BehaviorSubject.create();
-
     private final Runnable releaseRadioRunnable = new Runnable() {
         @Override
         public void run() {
             RxBleRadioOperationConnect.this.releaseRadio();
         }
     };
-
     private final Runnable emptyRunnable = new Runnable() {
         @Override
         public void run() {
@@ -64,17 +61,21 @@ public class RxBleRadioOperationConnect extends RxBleRadioOperation<BluetoothGat
             })
             .share();
 
-    public RxBleRadioOperationConnect(BluetoothDevice bluetoothDevice, RxBleGattCallback rxBleGattCallback,
-                                      BleConnectionCompat connectionCompat, boolean autoConnect) {
+    @Inject
+    RxBleRadioOperationConnect(BluetoothDevice bluetoothDevice, RxBleGattCallback rxBleGattCallback, BleConnectionCompat connectionCompat) {
         this.bluetoothDevice = bluetoothDevice;
         this.rxBleGattCallback = rxBleGattCallback;
         this.connectionCompat = connectionCompat;
-        this.autoConnect = autoConnect;
     }
 
     @Override
     public Observable<BluetoothGatt> asObservable() {
         return operationConnectAsObservableWithSubscribersMonitoring;
+    }
+
+    public RxBleRadioOperationConnect setAutoConnect(boolean autoConnect) {
+        this.autoConnect = autoConnect;
+        return this;
     }
 
     @Override
@@ -169,16 +170,6 @@ public class RxBleRadioOperationConnect extends RxBleRadioOperation<BluetoothGat
                         bluetoothGattBehaviorSubject.onCompleted();
                     }
                 });
-    }
-
-    /**
-     * Obtain observable emitting most recent {@link BluetoothGatt instance}.
-     * NOTE: Connection may be released and/or GATT may be closed in any point of time.
-     *
-     * @return Observable with BluetoothGatt. Most recent GATT will be emitted instantly after subscription if it is available.
-     */
-    public Observable<BluetoothGatt> getBluetoothGatt() {
-        return bluetoothGattBehaviorSubject;
     }
 
     @Override

@@ -24,7 +24,6 @@ public class RxBleConnectionConnectorImplTest extends Specification {
     RxBleRadio mockRadio = Mock RxBleRadio
     BluetoothDevice mockDevice = Mock BluetoothDevice
     RxBleGattCallback mockCallback = Mock RxBleGattCallback
-    RxBleGattCallback.Provider mockCallbackProvider = Mock RxBleGattCallback.Provider
     RxBleRadioOperationConnect mockConnect = Mock RxBleRadioOperationConnect
     RxBleRadioOperationDisconnect mockDisconnect = Mock RxBleRadioOperationDisconnect
     RxBleConnectionConnectorOperationsProvider mockOperationsProvider = Mock RxBleConnectionConnectorOperationsProvider
@@ -41,7 +40,6 @@ public class RxBleConnectionConnectorImplTest extends Specification {
 
         objectUnderTest = new RxBleConnectionConnectorImpl(
                 mockDevice,
-                mockCallbackProvider,
                 mockOperationsProvider,
                 mockRadio,
                 mockConnectionCompat,

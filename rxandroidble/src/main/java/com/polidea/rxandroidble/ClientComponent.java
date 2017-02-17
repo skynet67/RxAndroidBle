@@ -1,11 +1,11 @@
 package com.polidea.rxandroidble;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.location.LocationManager;
 
-import com.polidea.rxandroidble.injection.ClientScope;
-import com.polidea.rxandroidble.injection.DeviceComponent;
+import com.polidea.rxandroidble.internal.DeviceComponent;
 import com.polidea.rxandroidble.internal.RxBleRadio;
 import com.polidea.rxandroidble.internal.radio.RxBleRadioImpl;
 
@@ -19,6 +19,7 @@ import dagger.Module;
 import dagger.Provides;
 import rx.Observable;
 import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 @ClientScope
@@ -78,6 +79,35 @@ interface ClientComponent {
         @Provides
         LocationManager provideLocationManager() {
             return (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        }
+
+        @Provides
+        BluetoothManager provideBluetoothManager() {
+            return (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        }
+
+        @Provides
+        @Named("main-thread")
+        Scheduler provideMainThreadScheduler() {
+            return AndroidSchedulers.mainThread();
+        }
+
+        @Provides
+        @Named("computation")
+        Scheduler provideComputationScheduler() {
+            return Schedulers.computation();
+        }
+
+        @Provides
+        @Named("timeout")
+        Scheduler providesTimeoutScheduler(@Named("computation") Scheduler computationScheduler) {
+            return computationScheduler;
+        }
+
+        @Provides
+        @Named("callback-emitter")
+        Scheduler providesCallbackScheduler(@Named("main-thread") Scheduler mainThreadScheduler) {
+            return mainThreadScheduler;
         }
     }
 

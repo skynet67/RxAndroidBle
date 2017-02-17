@@ -2,7 +2,6 @@ package com.polidea.rxandroidble;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
-import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -27,7 +26,7 @@ public interface RxBleConnection {
 
     interface Connector {
 
-        Observable<RxBleConnection> prepareConnection(Context context, boolean autoConnect);
+        Observable<RxBleConnection> prepareConnection(boolean autoConnect);
     }
 
     class RxBleConnectionState {

@@ -1,10 +1,10 @@
-package com.polidea.rxandroidble.injection;
+package com.polidea.rxandroidble.internal;
 
 import com.polidea.rxandroidble.RxBleDevice;
-import com.polidea.rxandroidble.internal.DeviceModule;
 
 import dagger.Subcomponent;
 
+@DeviceScope
 @Subcomponent(modules = DeviceModule.class)
 public interface DeviceComponent {
 

@@ -1,6 +1,6 @@
 package com.polidea.rxandroidble.internal.cache;
 
-import com.polidea.rxandroidble.injection.DeviceComponent;
+import com.polidea.rxandroidble.internal.DeviceComponent;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;

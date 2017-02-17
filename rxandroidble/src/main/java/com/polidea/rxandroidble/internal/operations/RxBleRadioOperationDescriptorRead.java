@@ -2,23 +2,31 @@ package com.polidea.rxandroidble.internal.operations;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattDescriptor;
+
 import com.polidea.rxandroidble.exceptions.BleGattOperationType;
 import com.polidea.rxandroidble.internal.RxBleSingleGattRadioOperation;
 import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
 import com.polidea.rxandroidble.internal.util.ByteAssociation;
-import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import rx.Observable;
-import rx.Scheduler;
 import rx.functions.Func1;
 
 public class RxBleRadioOperationDescriptorRead extends RxBleSingleGattRadioOperation<ByteAssociation<BluetoothGattDescriptor>> {
 
-    private final BluetoothGattDescriptor bluetoothGattDescriptor;
+    private BluetoothGattDescriptor bluetoothGattDescriptor;
 
-    public RxBleRadioOperationDescriptorRead(RxBleGattCallback rxBleGattCallback, BluetoothGatt bluetoothGatt,
-                                             BluetoothGattDescriptor bluetoothGattDescriptor, Scheduler timeoutScheduler) {
-        super(bluetoothGatt, rxBleGattCallback, BleGattOperationType.DESCRIPTOR_READ, 30, TimeUnit.SECONDS, timeoutScheduler);
-        this.bluetoothGattDescriptor = bluetoothGattDescriptor;
+    @Inject
+    RxBleRadioOperationDescriptorRead(RxBleGattCallback rxBleGattCallback, BluetoothGatt bluetoothGatt,
+                                      @Named("operation") TimeoutConfiguration timeoutConfiguration) {
+        super(bluetoothGatt, rxBleGattCallback, BleGattOperationType.DESCRIPTOR_READ, timeoutConfiguration);
+    }
+
+    public RxBleRadioOperationDescriptorRead setDescriptor(BluetoothGattDescriptor descriptor) {
+        this.bluetoothGattDescriptor = descriptor;
+        return this;
     }
 
     @Override

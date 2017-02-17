@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothDevice
 import android.content.Context
 import com.polidea.rxandroidble.RxBleConnection
 import com.polidea.rxandroidble.RxBleDevice
-import com.polidea.rxandroidble.injection.DeviceComponent
 import com.polidea.rxandroidble.internal.cache.DeviceComponentCache
 import rx.Observable
 import spock.lang.Specification
