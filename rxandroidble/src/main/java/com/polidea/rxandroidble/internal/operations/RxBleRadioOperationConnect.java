@@ -14,6 +14,8 @@ import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
 import com.polidea.rxandroidble.internal.util.BleConnectionCompat;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+
 import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -155,6 +157,7 @@ public class RxBleRadioOperationConnect extends RxBleRadioOperation<BluetoothGat
                 // capture BluetoothGatt when connected
                 .sample(rxBleGattCallback
                         .getOnConnectionStateChange()
+                        .timeout(30, TimeUnit.SECONDS)
                         .filter(new Func1<RxBleConnection.RxBleConnectionState, Boolean>() {
                             @Override
                             public Boolean call(RxBleConnection.RxBleConnectionState rxBleConnectionState) {
