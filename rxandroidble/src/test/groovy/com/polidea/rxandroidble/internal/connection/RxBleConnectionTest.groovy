@@ -5,13 +5,20 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.os.Build
+import android.support.annotation.NonNull
 import com.polidea.rxandroidble.*
 import com.polidea.rxandroidble.exceptions.*
+import com.polidea.rxandroidble.internal.operations.OperationsProviderImpl
+import com.polidea.rxandroidble.internal.operations.RxBleRadioOperationReadRssi
 import com.polidea.rxandroidble.internal.util.ByteAssociation
 import com.polidea.rxandroidble.internal.util.CharacteristicChangedEvent
+import com.polidea.rxandroidble.internal.util.MockOperationTimeoutConfiguration
 import org.robolectric.annotation.Config
 import org.robospock.GradleRoboSpecification
+import rx.Observable
+import rx.Scheduler
 import rx.observers.TestSubscriber
+import rx.schedulers.TestScheduler
 import rx.subjects.BehaviorSubject
 import rx.subjects.PublishSubject
 import spock.lang.Unroll
@@ -34,7 +41,13 @@ class RxBleConnectionTest extends GradleRoboSpecification {
     def flatRadio = new FlatRxBleRadio()
     def gattCallback = Mock RxBleGattCallback
     def bluetoothGattMock = Mock BluetoothGatt
-    def objectUnderTest = new RxBleConnectionImpl(flatRadio, gattCallback, bluetoothGattMock)
+    def testScheduler = new TestScheduler()
+    def timeoutConfig = new MockOperationTimeoutConfiguration(testScheduler)
+    def operationsProviderMock = new OperationsProviderImpl(gattCallback, bluetoothGattMock, timeoutConfig, testScheduler,
+            testScheduler, { new RxBleRadioOperationReadRssi(gattCallback, bluetoothGattMock, timeoutConfig) })
+    def objectUnderTest = new RxBleConnectionImpl(flatRadio, gattCallback, bluetoothGattMock, operationsProviderMock,
+            { new LongWriteOperationBuilderImpl(flatRadio, { 20 }, Mock(RxBleConnection)) }, testScheduler
+    )
     def connectionStateChange = BehaviorSubject.create()
     def TestSubscriber testSubscriber
 
@@ -653,6 +666,80 @@ class RxBleConnectionTest extends GradleRoboSpecification {
         setupIndicationCharacteristicClosure   | setupNotificationUuidClosure
         setupNotificationCharacteristicClosure | setupIndicationUuidClosure
         setupIndicationUuidClosure             | setupNotificationCharacteristicClosure
+    }
+
+    def "should pass items emitted by observable returned from RxBleRadioOperationCustom.asObservable()"() {
+        given:
+        def radioOperationCustom = customRadioOperationWithOutcome {
+            Observable.just(true, false, true)
+        }
+
+        when:
+        objectUnderTest.queue(radioOperationCustom).subscribe(testSubscriber)
+
+        then:
+        testSubscriber.assertCompleted()
+        testSubscriber.assertValues(true, false, true)
+    }
+
+    def "should pass error and release the radio if custom operation will throw out of RxBleRadioOperationCustom.asObservable()"() {
+        given:
+        def radioOperationCustom = customRadioOperationWithOutcome { throw new RuntimeException() }
+
+        when:
+        objectUnderTest.queue(radioOperationCustom).subscribe(testSubscriber)
+
+        then:
+        flatRadio.semaphore.isReleased()
+        testSubscriber.assertError(RuntimeException.class)
+    }
+
+    def "should pass error and release the radio if observable returned from RxBleRadioOperationCustom.asObservable() will emit error"() {
+        given:
+        def radioOperationCustom = customRadioOperationWithOutcome { Observable.error(new RuntimeException()) }
+
+        when:
+        objectUnderTest.queue(radioOperationCustom).subscribe(testSubscriber)
+
+        then:
+        flatRadio.semaphore.isReleased()
+        testSubscriber.assertError(RuntimeException.class)
+    }
+
+    def "should release the radio when observable returned from RxBleRadioOperationCustom.asObservable() will complete"() {
+        given:
+        def radioOperationCustom = customRadioOperationWithOutcome { Observable.empty() }
+
+        when:
+        objectUnderTest.queue(radioOperationCustom).subscribe(testSubscriber)
+
+        then:
+        flatRadio.semaphore.isReleased()
+        testSubscriber.assertCompleted()
+    }
+
+    def "should throw illegal argument exception if RxBleRadioOperationCustom.asObservable() return null"() {
+        given:
+        def radioOperationCustom = customRadioOperationWithOutcome { null }
+
+        when:
+        objectUnderTest.queue(radioOperationCustom).subscribe(testSubscriber)
+
+        then:
+        flatRadio.semaphore.isReleased()
+        testSubscriber.assertError(IllegalArgumentException.class)
+    }
+
+    public customRadioOperationWithOutcome(Closure<Observable<Boolean>> outcomeSupplier) {
+        new RxBleRadioOperationCustom<Boolean>() {
+            @NonNull
+            @Override
+            Observable<Boolean> asObservable(BluetoothGatt bluetoothGatt,
+                                             RxBleGattCallback rxBleGattCallback,
+                                             Scheduler scheduler) throws Throwable {
+                outcomeSupplier()
+            }
+        }
     }
 
     public shouldSetupCharacteristicNotificationCorrectly(UUID characteristicUUID, int instanceId) {
