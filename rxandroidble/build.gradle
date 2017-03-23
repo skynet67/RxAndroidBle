@@ -49,11 +49,4 @@ dependencies {
     compile rootProject.ext.libs.support_annotations
     compile rootProject.ext.libs.dagger
     apt rootProject.ext.libs.dagger_compiler
-
-    // Test dependencies
-    testCompile rootProject.ext.libs.junit
-    testCompile rootProject.ext.libs.groovy
-    testCompile rootProject.ext.libs.spock
-    testCompile rootProject.ext.libs.robospock
-    testCompile rootProject.ext.libs.support
 }
