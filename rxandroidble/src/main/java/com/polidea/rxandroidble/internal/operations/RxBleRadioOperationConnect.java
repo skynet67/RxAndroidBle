@@ -5,8 +5,8 @@ import android.bluetooth.BluetoothGatt;
 import android.os.DeadObjectException;
 import android.support.annotation.NonNull;
 
-import com.polidea.rxandroidble.exceptions.BleDisconnectedException;
 import com.polidea.rxandroidble.RxBleConnection;
+import com.polidea.rxandroidble.exceptions.BleDisconnectedException;
 import com.polidea.rxandroidble.exceptions.BleException;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.internal.RxBleRadioOperation;
@@ -14,7 +14,6 @@ import com.polidea.rxandroidble.internal.connection.RxBleGattCallback;
 import com.polidea.rxandroidble.internal.util.BleConnectionCompat;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.functions.Action0;
@@ -157,7 +156,6 @@ public class RxBleRadioOperationConnect extends RxBleRadioOperation<BluetoothGat
                 // capture BluetoothGatt when connected
                 .sample(rxBleGattCallback
                         .getOnConnectionStateChange()
-                        .timeout(30, TimeUnit.SECONDS)
                         .filter(new Func1<RxBleConnection.RxBleConnectionState, Boolean>() {
                             @Override
                             public Boolean call(RxBleConnection.RxBleConnectionState rxBleConnectionState) {
